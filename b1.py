@@ -44,25 +44,25 @@ def create_carrier(carrier: Carrier):
         if c["code"] == carrier.code:
             raise HTTPException(
                 status_code=400,
-                detail="Carrier code already exists"
+                detail="mã code đã tồn taij"
             )
 
     if len(carrier.name.strip()) < 3:
         raise HTTPException(
             status_code=400,
-            detail="Name must have at least 3 characters"
+            detail="Tên có ít nhất 3 kí tự"
         )
 
     if carrier.max_weight_capacity <= 0:
         raise HTTPException(
             status_code=400,
-            detail="Invalid max weight capacity"
+            detail="max_weight_capacity phải là số nguyên lớn hơn 0."
         )
 
     if carrier.status not in ["ACTIVE", "INACTIVE", "SUSPENDED"]:
         raise HTTPException(
             status_code=400,
-            detail="Invalid status"
+            detail="KHÔNg hợp lệ"
         )
 
     new_carrier = {
@@ -106,7 +106,7 @@ def get_carrier(carrier_id: int):
     if carrier is None:
         raise HTTPException(
             status_code=404,
-            detail="Carrier not found"
+            detail="Không tìm thấy"
         )
 
     return carrier
@@ -117,14 +117,14 @@ def update_carrier(carrier_id: int, carrier_data: Carrier):
     if carrier is None:
         raise HTTPException(
             status_code=404,
-            detail="Carrier not found"
+            detail="Không tìm thấy"
         )
 
     for c in carriers:
         if c["id"] != carrier_id and c["code"] == carrier_data.code:
             raise HTTPException(
                 status_code=400,
-                detail="Carrier code already exists"
+                detail="mã code đã tồn tại"
             )
 
     carrier["code"] = carrier_data.code
@@ -139,12 +139,12 @@ def delete_carrier(carrier_id: int):
     if carrier is None:
         raise HTTPException(
             status_code=404,
-            detail="Carrier not found"
+            detail="Không tìm thấy"
         )
 
     carriers.remove(carrier)
     return {
-        "message": "Delete success"
+        "message": "Xoá thành công"
     }
 
 @app.post("/shipments")
@@ -153,38 +153,38 @@ def create_shipment(shipment: Shipment):
     if carrier is None:
         raise HTTPException(
             status_code=404,
-            detail="Carrier not found"
+            detail="Không tìm thấy"
         )
 
     if carrier["status"] != "ACTIVE":
         raise HTTPException(
             status_code=400,
-            detail="Carrier is not active"
+            detail="Carrier không hoạt động"
         )
 
     if shipment.total_weight <= 0:
         raise HTTPException(
             status_code=400,
-            detail="Invalid total weight"
+            detail="không hợp lệ"
         )
 
     if shipment.total_weight > carrier["max_weight_capacity"]:
         raise HTTPException(
             status_code=400,
-            detail="Shipment exceeds carrier capacity"
+            detail="Khối lượng chuyến hàng total_weight không được phép vượt quá năng lực vận chuyển tối đa"
         )
 
     if shipment.shift not in ["MORNING", "AFTERNOON", "NIGHT"]:
         raise HTTPException(
             status_code=400,
-            detail="Invalid shift"
+            detail="không hợp lệ"
         )
 
     for s in shipments:
         if s["carrier_id"] == shipment.carrier_id and s["dispatch_date"] == shipment.dispatch_date and s["shift"] == shipment.shift:
             raise HTTPException(
                 status_code=400,
-                detail="Carrier already scheduled"
+                detail="không được xếp trùng lịch "
             )
 
     new_shipment = {
